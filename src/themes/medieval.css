@@ -1,0 +1,208 @@
+:root {
+  /* Color Palette */
+  --color-primary: #4a4e69;
+  --color-secondary: #9a8c98;
+  --color-accent: #c9ada7;
+  --color-background: #22223b;
+  --color-text: #f2e9e4;
+  --color-wood: #8b4513;
+  --color-stone: #808080;
+  --color-gold: #ffd700;
+  --color-torch: #ff4500;
+  
+  /* Fonts */
+  --font-medieval: 'MedievalSharp', cursive;
+  --font-text: 'Crimson Text', serif;
+  
+  /* Shadows */
+  --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.3);
+  --shadow-hard: 0 8px 16px rgba(0, 0, 0, 0.4);
+  
+  /* Animations */
+  --transition-slow: 0.5s ease;
+  --transition-medium: 0.3s ease;
+  --transition-fast: 0.2s ease;
+  
+  /* Border Radius */
+  --radius-small: 4px;
+  --radius-medium: 8px;
+  --radius-large: 12px;
+}
+
+/* Common Components */
+.medieval-button {
+  background-color: var(--color-wood);
+  color: var(--color-text);
+  border: 2px solid var(--color-gold);
+  padding: 12px 24px;
+  font-family: var(--font-medieval);
+  font-size: 1.2rem;
+  border-radius: var(--radius-medium);
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: var(--shadow-medium);
+}
+
+.medieval-button:hover {
+  background-color: var(--color-gold);
+  color: var(--color-background);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hard);
+}
+
+.medieval-scroll {
+  background-color: #f4e4bc;
+  border: 8px solid var(--color-wood);
+  padding: 20px;
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-medium);
+  position: relative;
+  margin: 20px;
+  font-family: var(--font-text);
+  color: var(--color-background);
+  line-height: 1.6;
+}
+
+.medieval-scroll::before,
+.medieval-scroll::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 100%;
+  top: 0;
+  background-color: var(--color-wood);
+}
+
+.medieval-scroll::before {
+  left: -8px;
+  border-radius: var(--radius-medium) 0 0 var(--radius-medium);
+}
+
+.medieval-scroll::after {
+  right: -8px;
+  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+}
+
+.medieval-title {
+  font-family: var(--font-medieval);
+  color: var(--color-gold);
+  text-align: center;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 20px 0;
+}
+
+.medieval-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
+
+/* Animations */
+@keyframes torchlight {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.torch-glow {
+  animation: torchlight 3s infinite;
+}
+
+.floating {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+  .medieval-container {
+    padding: 10px;
+  }
+
+  .medieval-scroll {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .medieval-scroll::before,
+  .medieval-scroll::after {
+    width: 20px;
+  }
+
+  .medieval-title {
+    font-size: 2rem;
+    margin: 15px 0;
+  }
+
+  .medieval-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .medieval-container {
+    padding: 5px;
+  }
+
+  .medieval-scroll {
+    margin: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+
+  .medieval-scroll::before,
+  .medieval-scroll::after {
+    width: 15px;
+  }
+
+  .medieval-title {
+    font-size: 1.8rem;
+    margin: 12px 0;
+  }
+
+  .medieval-button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Touch-specific improvements */
+@media (hover: none) {
+  .medieval-button:hover {
+    transform: none;
+  }
+
+  .medieval-button:active {
+    background-color: var(--color-gold);
+    color: var(--color-background);
+    transform: translateY(1px);
+  }
+}
+
+/* Prevent text selection on mobile */
+.medieval-container * {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* Improve touch targets */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+} 
