@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/puzzlegift/static/css/main.6dcb35fc.css",
-    "main.js": "/puzzlegift/static/js/main.6ea33af6.js",
+    "main.js": "/puzzlegift/static/js/main.f2339ff6.js",
     "static/js/488.b8091c11.chunk.js": "/puzzlegift/static/js/488.b8091c11.chunk.js",
     "index.html": "/puzzlegift/index.html",
     "main.6dcb35fc.css.map": "/puzzlegift/static/css/main.6dcb35fc.css.map",
-    "main.6ea33af6.js.map": "/puzzlegift/static/js/main.6ea33af6.js.map",
+    "main.f2339ff6.js.map": "/puzzlegift/static/js/main.f2339ff6.js.map",
     "488.b8091c11.chunk.js.map": "/puzzlegift/static/js/488.b8091c11.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.6dcb35fc.css",
-    "static/js/main.6ea33af6.js"
+    "static/js/main.f2339ff6.js"
   ]
 }
