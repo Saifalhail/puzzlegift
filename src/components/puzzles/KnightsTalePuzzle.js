@@ -58,6 +58,7 @@ const KnightsTalePuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: ini
       setKnights(SOLUTION);
       setIsComplete(true);
       setShowSuccess(true);
+      setShowConfirmButton(false);
     }
   }, [initialIsComplete]);
 
@@ -77,36 +78,33 @@ const KnightsTalePuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: ini
     setKnights(newKnights);
   };
 
-  const checkSolution = (currentKnights) => {
-    const isCorrect = currentKnights.every((knight, index) => 
-      knight.color === SOLUTION[index].color &&
-      knight.weapon === SOLUTION[index].weapon &&
-      knight.banner === SOLUTION[index].banner
-    );
+  const handleConfirm = () => {
+    if (isComplete) return;
+
+    const isCorrect = knights.every((knight, index) => {
+      return SOLUTION[index].color === knight.color &&
+             SOLUTION[index].weapon === knight.weapon &&
+             SOLUTION[index].banner === knight.banner;
+    });
 
     if (isCorrect) {
-      SoundManager.play('success');
       setShowSparkles(true);
-      setTimeout(() => {
-        setShowSuccess(true);
-        setIsComplete(true);
-      }, 1000);
+      setShowSuccess(true);
+      setIsComplete(true);
+      SoundManager.play('success');
     } else {
-      setErrorMessage('Some knights are mismatched—keep trying!');
-      setTimeout(() => setErrorMessage(''), 2000);
+      setErrorMessage('The knights are not in their correct positions. Try again!');
+      setTimeout(() => setErrorMessage(''), 3000);
+      SoundManager.play('error');
     }
   };
 
   const handleContinue = () => {
-    onComplete && onComplete();
+    if (!isComplete) return;
+    onComplete();
   };
 
   const puzzleHint = "Remember: Knight 1 is Sir Gawain with his Lance and Stag banner, Knight 2 wields an Axe under the Lion banner and stands beside the Red Knight, Knight 3 is the Blue Knight with a Sword, and Knight 4 with the Eagle banner must not be next to the Yellow Knight!";
-
-  // Add confirm handler
-  const handleConfirm = () => {
-    checkSolution(knights);
-  };
 
   return (
     <div className="medieval-container">
@@ -118,7 +116,7 @@ const KnightsTalePuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: ini
 
       <PuzzleStepper 
         currentPuzzle={3}
-        totalPuzzles={10}
+        totalPuzzles={8}
         onNavigate={onBack}
       />
 
@@ -173,18 +171,13 @@ const KnightsTalePuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: ini
         <Sparkles active={showSparkles} />
 
         {showSuccess && (
-          <div className="success-message">
-            <p className="success-text">
-              Bravo! You've equipped the knights perfectly. 
-              Their colors shine true, their weapons gleam bright, 
-              and their banners wave proudly in the castle breeze!
-            </p>
+          <div className="success-container">
+            <h2 className="success-text">Well done! The knights stand proud in their true positions!</h2>
             <button 
-              className="medieval-button continue-button" 
+              className="medieval-button continue-button"
               onClick={handleContinue}
-              aria-label="Continue to next puzzle"
             >
-              Continue to the Lady's Treasure Vault →
+              Continue Journey →
             </button>
           </div>
         )}
@@ -298,49 +291,31 @@ const KnightsTalePuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: ini
         .color.green { color: #006600; }
         .color.yellow { color: #cccc00; }
 
-        .success-message {
-          position: absolute;
+        .success-container {
+          position: fixed;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          background: linear-gradient(
-            45deg,
-            var(--color-gold),
-            #ffd700,
-            #ffed4a
-          );
-          padding: 30px;
+          background: rgba(34, 34, 59, 0.95);
+          padding: 2rem;
           border-radius: var(--radius-medium);
+          border: 2px solid var(--color-gold);
           text-align: center;
-          box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-          border: 3px solid var(--color-wood);
-          max-width: 90%;
-          width: 400px;
-          z-index: 100;
+          z-index: 1000;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
         .success-text {
-          font-size: 1.4rem;
-          line-height: 1.4;
-          color: var(--color-background);
+          color: var(--color-gold);
           font-family: var(--font-medieval);
-          margin-bottom: 20px;
-          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+          font-size: 1.5rem;
+          margin-bottom: 1.5rem;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .continue-button {
           font-size: 1.2rem;
           padding: 12px 24px;
-          background: var(--color-background);
-          color: var(--color-gold);
-          border: 2px solid var(--color-wood);
-          transition: all 0.3s ease;
-          animation: pulse 2s infinite;
-        }
-
-        .continue-button:hover {
-          transform: scale(1.05);
-          box-shadow: 0 0 20px rgba(139, 69, 19, 0.4);
         }
 
         .error-message {
@@ -363,12 +338,6 @@ const KnightsTalePuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: ini
         @keyframes fadeIn {
           from { opacity: 0; transform: translate(-50%, 20px); }
           to { opacity: 1; transform: translate(-50%, 0); }
-        }
-
-        @keyframes pulse {
-          0% { box-shadow: 0 0 15px var(--color-torch); }
-          50% { box-shadow: 0 0 25px var(--color-torch); }
-          100% { box-shadow: 0 0 15px var(--color-torch); }
         }
 
         .scroll-indicator-wrapper {

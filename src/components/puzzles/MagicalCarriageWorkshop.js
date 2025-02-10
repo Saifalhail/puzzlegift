@@ -9,22 +9,28 @@ import WorkshopBackground from '../svg/WorkshopBackground';
 import CarriagePreview from '../svg/CarriagePreview';
 
 const CARRIAGE_OPTIONS = {
-  wheels: ['wooden', 'modern'],
+  wheels: ['classic', 'sport', 'luxury', 'modern'],
   color: ['silver', 'black', 'pink', 'gold'],
-  ornament: ['dragon', 'horse', 'bentley']
+  ornament: ['crown', 'star', 'bentley', 'dragon'],
+  trim: ['chrome', 'gold', 'black', 'matching'],
+  emblem: ['wings', 'shield', 'crest', 'bentley']
 };
 
 const CORRECT_COMBINATION = {
   wheels: 'modern',
   color: 'pink',
-  ornament: 'bentley'
+  ornament: 'bentley',
+  trim: 'chrome',
+  emblem: 'bentley'
 };
 
 const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplete: initialIsComplete = false }) => {
   const [selectedOptions, setSelectedOptions] = useState({
     wheels: CARRIAGE_OPTIONS.wheels[0],
     color: CARRIAGE_OPTIONS.color[0],
-    ornament: CARRIAGE_OPTIONS.ornament[0]
+    ornament: CARRIAGE_OPTIONS.ornament[0],
+    trim: CARRIAGE_OPTIONS.trim[0],
+    emblem: CARRIAGE_OPTIONS.emblem[0]
   });
   const [showSparkles, setShowSparkles] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -32,7 +38,7 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
   const [errorMessage, setErrorMessage] = useState('');
   const [showHint, setShowHint] = useState(false);
 
-  const puzzleHint = "Think about your dream car - a modern luxury vehicle with a distinctive 'B' emblem. The color should match your favorite!";
+  const puzzleHint = "Think about your dream car - a modern luxury vehicle with a distinctive 'B' emblem, chrome accents, and the right ornaments. The color should match your favorite!";
 
   useEffect(() => {
     SoundManager.startBackgroundMusic('workshop');
@@ -52,10 +58,15 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
     const newOptions = { ...selectedOptions, [type]: value };
     setSelectedOptions(newOptions);
     setErrorMessage('');
+  };
 
+  const handleConfirm = () => {
     // Check if the combination is correct
-    if (Object.entries(newOptions).every(([key, value]) => value === CORRECT_COMBINATION[key])) {
+    if (Object.entries(selectedOptions).every(([key, value]) => value === CORRECT_COMBINATION[key])) {
       handleSuccess();
+    } else {
+      setErrorMessage('Not quite right... Keep trying!');
+      SoundManager.play('error');
     }
   };
 
@@ -63,12 +74,14 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
     setShowSparkles(true);
     setShowSuccess(true);
     setIsComplete(true);
+    setSelectedOptions(CORRECT_COMBINATION);
     SoundManager.play('success');
-    onComplete && onComplete();
   };
 
   const handleContinue = () => {
-    onComplete && onComplete();
+    if (onComplete) {
+      onComplete();
+    }
   };
 
   const cycleOption = (type) => {
@@ -87,8 +100,8 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
       />
 
       <PuzzleStepper 
-        currentPuzzle={6}
-        totalPuzzles={10}
+        currentPuzzle={5}
+        totalPuzzles={8}
         onNavigate={onBack}
       />
 
@@ -107,6 +120,15 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
               <p className="success-message">
                 You've crafted the perfect Pink Bentley—your dream car in all its glory.
               </p>
+              <div className="completed-car">
+                <CarriagePreview
+                  wheels={CORRECT_COMBINATION.wheels}
+                  color={CORRECT_COMBINATION.color}
+                  ornament={CORRECT_COMBINATION.ornament}
+                  trim={CORRECT_COMBINATION.trim}
+                  emblem={CORRECT_COMBINATION.emblem}
+                />
+              </div>
               <button 
                 className="medieval-button continue-button"
                 onClick={handleContinue}
@@ -121,20 +143,32 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
             <div className="options-container">
               <div className="option-group">
                 <h3>Wheels</h3>
-                <button onClick={() => cycleOption('wheels')}>
+                <button onClick={() => cycleOption('wheels')} className="option-button">
                   {selectedOptions.wheels}
                 </button>
               </div>
               <div className="option-group">
                 <h3>Color</h3>
-                <button onClick={() => cycleOption('color')}>
+                <button onClick={() => cycleOption('color')} className="option-button">
                   {selectedOptions.color}
                 </button>
               </div>
               <div className="option-group">
                 <h3>Hood Ornament</h3>
-                <button onClick={() => cycleOption('ornament')}>
+                <button onClick={() => cycleOption('ornament')} className="option-button">
                   {selectedOptions.ornament}
+                </button>
+              </div>
+              <div className="option-group">
+                <h3>Trim Style</h3>
+                <button onClick={() => cycleOption('trim')} className="option-button">
+                  {selectedOptions.trim}
+                </button>
+              </div>
+              <div className="option-group">
+                <h3>Side Emblem</h3>
+                <button onClick={() => cycleOption('emblem')} className="option-button">
+                  {selectedOptions.emblem}
                 </button>
               </div>
             </div>
@@ -144,7 +178,18 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
                 wheels={selectedOptions.wheels}
                 color={selectedOptions.color}
                 ornament={selectedOptions.ornament}
+                trim={selectedOptions.trim}
+                emblem={selectedOptions.emblem}
               />
+            </div>
+
+            <div className="confirm-section">
+              <button 
+                onClick={handleConfirm}
+                className="medieval-button confirm-button"
+              >
+                Confirm Design
+              </button>
             </div>
           </div>
         )}
@@ -162,28 +207,29 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
             riddle={`
               In this workshop where magic meets steel,
               A carriage awaits, with modern appeal.
-              No wooden wheels can match your pace,
-              Modern rims set a luxurious grace.
+              Modern wheels, not classic or old,
+              With chrome accents bright and bold.
               A proud letter stands where horses once led,
               'B' for the beauty that lies ahead.
               Pink as your dreams, this chariot gleams,
-              Transform this coach beyond what it seems.
+              With matching emblems that catch moonbeams.
+              When all is set just as it should be,
+              Confirm your choice and set magic free!
             `}
             instructions={[
               "1. Tap each option to cycle through choices",
-              "2. Match the wheels, color, and ornament to your dream car",
-              "3. The correct combination will trigger the transformation",
-              "4. Think modern luxury with a personal touch",
+              "2. Match the wheels, color, ornaments, trim, and emblems",
+              "3. All elements should match your dream luxury car",
+              "4. Think modern elegance with a personal touch",
               "5. Your favorite color holds the key",
-              "6. The right emblem marks true elegance"
+              "6. The right emblems mark true luxury",
+              "7. Click 'Confirm Design' when ready"
             ]}
           />
         </div>
       )}
 
-      <div className="scroll-indicator-wrapper">
-        <ScrollIndicator text="Scroll for instructions" />
-      </div>
+      <ScrollIndicator text="Scroll for instructions" />
 
       <style jsx>{`
         .workshop-container {
@@ -239,7 +285,7 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
           font-family: var(--font-medieval);
         }
 
-        .option-group button {
+        .option-button {
           background: var(--color-primary);
           color: var(--color-text);
           padding: 10px 20px;
@@ -248,24 +294,48 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
           cursor: pointer;
           transition: all 0.3s ease;
           text-transform: capitalize;
-          min-width: 120px;
+          font-family: var(--font-medieval);
         }
 
-        .option-group button:hover {
+        .option-button:hover {
           transform: scale(1.05);
-          box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+          box-shadow: 0 0 10px var(--color-gold);
         }
 
-        .carriage-display {
-          min-height: 300px;
+        .confirm-section {
           display: flex;
-          align-items: center;
           justify-content: center;
-          margin: 20px 0;
-          padding: 20px;
-          background: rgba(0, 0, 0, 0.2);
+          margin-top: 20px;
+        }
+
+        .confirm-button {
+          font-size: 1.2rem;
+          padding: 15px 30px;
+          background: var(--color-gold);
+          color: var(--color-background);
+          border: none;
           border-radius: var(--radius-medium);
-          border: 2px solid var(--color-gold);
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-family: var(--font-medieval);
+        }
+
+        .confirm-button:hover {
+          transform: scale(1.05);
+          box-shadow: 0 0 20px var(--color-gold);
+        }
+
+        .error-message {
+          position: fixed;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: rgba(255, 0, 0, 0.2);
+          color: var(--color-torch);
+          padding: 10px 20px;
+          border-radius: var(--radius-medium);
+          border: 1px solid var(--color-torch);
+          z-index: 1000;
         }
 
         .success-container {
@@ -285,7 +355,7 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
           padding: 30px;
           border-radius: var(--radius-medium);
           box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-          max-width: 600px;
+          max-width: 800px;
           margin: 20px auto;
           position: relative;
           z-index: 2;
@@ -303,39 +373,37 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
           font-size: 1.4rem;
           line-height: 1.4;
           color: var(--color-background);
-          margin-bottom: 20px;
+          margin-bottom: 30px;
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+          font-family: var(--font-medieval);
+        }
+
+        .completed-car {
+          width: 100%;
+          max-width: 600px;
+          margin: 0 auto 30px;
+          background: rgba(0, 0, 0, 0.2);
+          border-radius: var(--radius-medium);
+          padding: 20px;
+          border: 2px solid var(--color-background);
         }
 
         .continue-button {
           font-size: 1.2rem;
-          padding: 12px 24px;
+          padding: 15px 30px;
           background: var(--color-background);
           color: var(--color-gold);
-          border: 2px solid var(--color-wood);
+          border: 2px solid var(--color-background);
+          border-radius: var(--radius-medium);
+          cursor: pointer;
           transition: all 0.3s ease;
+          font-family: var(--font-medieval);
           animation: pulse 2s infinite;
         }
 
         .continue-button:hover {
           transform: scale(1.05);
-          box-shadow: 0 0 20px rgba(139, 69, 19, 0.4);
-        }
-
-        .error-message {
-          position: absolute;
-          bottom: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: rgba(255, 69, 0, 0.2);
-          color: var(--color-torch);
-          padding: 8px 16px;
-          border-radius: var(--radius-medium);
-          text-align: center;
-          font-family: var(--font-medieval);
-          font-size: 1.1rem;
-          border: 1px solid var(--color-torch);
-          animation: fadeIn 0.3s ease-out;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
         }
 
         @keyframes fadeIn {
@@ -344,20 +412,19 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
         }
 
         @keyframes pulse {
-          0% { box-shadow: 0 0 15px var(--color-torch); }
-          50% { box-shadow: 0 0 25px var(--color-torch); }
-          100% { box-shadow: 0 0 15px var(--color-torch); }
+          0% { box-shadow: 0 0 15px var(--color-background); }
+          50% { box-shadow: 0 0 25px var(--color-background); }
+          100% { box-shadow: 0 0 15px var(--color-background); }
         }
 
         @media (max-width: 768px) {
           .option-group {
-            padding: 15px;
             min-width: 120px;
           }
-
-          .option-group button {
-            min-width: 100px;
+          
+          .option-button {
             padding: 8px 16px;
+            font-size: 0.9rem;
           }
 
           .success-title {
@@ -368,34 +435,13 @@ const MagicalCarriageWorkshop = ({ onComplete, onBack, previousPuzzle, isComplet
             font-size: 1.2rem;
           }
 
-          .continue-button {
-            font-size: 1.1rem;
-            padding: 10px 20px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .option-group {
+          .completed-car {
             padding: 10px;
-            min-width: 100px;
-          }
-
-          .option-group button {
-            min-width: 80px;
-            padding: 6px 12px;
-          }
-
-          .success-title {
-            font-size: 1.8rem;
-          }
-
-          .success-message {
-            font-size: 1.1rem;
           }
 
           .continue-button {
-            font-size: 1rem;
-            padding: 8px 16px;
+            font-size: 1.1rem;
+            padding: 12px 24px;
           }
         }
       `}</style>

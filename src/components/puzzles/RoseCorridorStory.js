@@ -19,237 +19,114 @@ const RoseCorridorStory = ({ onComplete, onBack, previousPuzzle }) => {
         previousPuzzle={previousPuzzle}
       />
 
-      <PuzzleStepper 
-        currentPuzzle={2}
-        totalPuzzles={10}
-        onNavigate={onBack}
-      />
+      <PuzzleStepper currentPuzzle={2} totalPuzzles={8} onNavigate={() => {}} />
 
-      <div className="rose-corridor">
-        <div className="background-scene">
-          <RoseCorridorScene className="corridor-scene" />
+      <div className="falling-roses">
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className={`rose rose-${i}`}>🌹</div>
+        ))}
+      </div>
+
+      <h1 className="medieval-title">Whispers of the Rose</h1>
+
+      <div className="corridor-content">
+        <RoseCorridorScene className="rose-scene" />
+        
+        <div className="story-scroll">
+          <div className="scroll-content">
+            <div className="heart-decoration">❦</div>
+            <p className="story-text">
+              As you walk through this corridor adorned with enchanted roses,
+              each petal whispers tales of our love story. The air is sweet
+              with memories of our first meeting, our shared dreams, and the
+              countless moments that have made our journey magical.
+            </p>
+            <div className="heart-decoration">❦</div>
+          </div>
         </div>
 
-        <div className="corridor-content">
-          <h1 className="medieval-title">Whispers of the Rose Corridor</h1>
-          
-          <div className="story-text">
-            <p>
-              My dearest wife-to-be, you have once again showcased your cleverness by uncovering 
-              the hidden letters of our first trip—London. As we leave the Grand Study behind, 
-              follow me down this quiet corridor. Notice the scent of roses in the air and 
-              the gentle glow of lanterns guiding our steps.
-            </p>
-            <p>
-              Beyond these arches lies the Hall of Knights, where steadfast guardians of 
-              the realm keep their vigil. Prepare yourself for a challenge that will test 
-              your wits and honor—a puzzle that calls upon courage, precision, and a keen mind.
-            </p>
-            <p>
-              Let our footsteps echo through these ancient halls as we continue this journey 
-              of memories, love, and curiosity. Forward we go, my love, into the unknown 
-              mysteries that await us.
-            </p>
-          </div>
-
+        <div className="button-container">
           <button 
             className="medieval-button continue-button"
             onClick={onComplete}
-            aria-label="Continue to next puzzle"
           >
-            Continue to the Hall of Knights →
+            Continue Journey →
           </button>
-        </div>
-
-        <div className="rose-petals">
-          {/* Rose petals animation elements */}
-          {Array.from({ length: 12 }).map((_, index) => (
-            <div key={index} className={`petal petal-${index + 1}`} />
-          ))}
-        </div>
-
-        <div className="lanterns">
-          {/* Lantern elements with flickering effect */}
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className={`lantern lantern-${index + 1}`}>
-              <div className="flame" />
-            </div>
-          ))}
         </div>
       </div>
 
       <div className="scroll-indicator-wrapper">
-        <ScrollIndicator text="Scroll for more" />
+        <ScrollIndicator />
       </div>
 
       <style jsx>{`
-        .content-wrapper {
-          position: relative;
-          padding-top: 120px;
-          width: 100%;
-        }
-
-        .rose-corridor {
-          position: relative;
-          max-width: 800px;
-          margin: 0 auto;
-          margin-top: 20px;
-          padding: 20px;
-          min-height: 80vh;
-          border: 3px solid var(--color-gold);
-          border-radius: var(--radius-medium);
-          overflow: hidden;
-        }
-
-        .background-scene {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 0;
-        }
-
-        .corridor-scene {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
         .corridor-content {
           position: relative;
-          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-height: calc(100vh - 200px);
           padding: 20px;
-          background: rgba(26, 26, 42, 0.7);
-          backdrop-filter: blur(4px);
+          gap: 20px;
+        }
+
+        .rose-scene {
+          width: 100%;
+          max-width: 800px;
+          height: auto;
+          margin-bottom: 20px;
+        }
+
+        .story-scroll {
+          width: 100%;
+          max-width: 600px;
+          margin: 0 auto;
+          position: relative;
+          z-index: 2;
+        }
+
+        .scroll-content {
+          background: linear-gradient(
+            to bottom,
+            rgba(34, 34, 59, 0.95),
+            rgba(74, 78, 105, 0.95)
+          );
+          padding: 20px;
           border-radius: var(--radius-medium);
-          margin: 20px;
+          border: 2px solid var(--color-gold);
+          text-align: center;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
         }
 
         .story-text {
-          font-family: var(--font-medieval);
-          font-size: 1.2rem;
+          font-size: 1.5rem;
           line-height: 1.6;
           color: var(--color-text);
-          margin: 30px 0;
-          text-align: justify;
-          max-width: 600px;
-          margin: 30px auto;
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+          font-family: var(--font-text);
+          margin: 0;
+          letter-spacing: 0.5px;
         }
 
-        .story-text p {
-          margin-bottom: 20px;
-          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        .heart-decoration {
+          color: var(--color-gold);
+          font-size: 2rem;
+          margin: 10px 0;
+          text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .button-container {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+          position: relative;
+          z-index: 2;
         }
 
         .continue-button {
-          display: block;
-          margin: 40px auto;
           font-size: 1.2rem;
-          padding: 15px 30px;
-          background: var(--color-gold);
-          color: var(--color-background);
-          border: 2px solid var(--color-wood);
-          transition: all 0.3s ease;
-          animation: pulse 2s infinite;
-        }
-
-        .continue-button:hover {
-          transform: scale(1.05);
-          box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-        }
-
-        /* Rose petals animation */
-        .rose-petals {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 3;
-        }
-
-        .petal {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff1f1f);
-          border-radius: 50% 0 50% 50%;
-          opacity: 0;
-          animation: fall 10s linear infinite;
-        }
-
-        /* Generate different positions and delays for petals */
-        ${Array.from({ length: 12 }).map((_, i) => `
-          .petal-${i + 1} {
-            left: ${Math.random() * 100}%;
-            animation-delay: ${Math.random() * 10}s;
-          }
-        `).join('\n')}
-
-        @keyframes fall {
-          0% {
-            transform: translateY(-20px) rotate(0deg);
-            opacity: 0;
-          }
-          10% {
-            opacity: 0.8;
-          }
-          90% {
-            opacity: 0.8;
-          }
-          100% {
-            transform: translateY(100vh) rotate(360deg);
-            opacity: 0;
-          }
-        }
-
-        /* Lanterns */
-        .lanterns {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-        }
-
-        .lantern {
-          position: absolute;
-          width: 30px;
-          height: 40px;
-          background: rgba(255, 200, 100, 0.2);
-          border-radius: 5px;
-        }
-
-        .flame {
-          position: absolute;
-          top: 25%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 10px;
-          height: 10px;
-          background: #ffd700;
-          border-radius: 50%;
-          animation: flicker 3s infinite;
-        }
-
-        /* Position lanterns */
-        .lantern-1 { top: 20%; left: 10%; }
-        .lantern-2 { top: 30%; right: 10%; }
-        .lantern-3 { bottom: 30%; left: 15%; }
-        .lantern-4 { bottom: 20%; right: 15%; }
-
-        @keyframes flicker {
-          0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 0.8; transform: translate(-50%, -50%) scale(0.9); }
-        }
-
-        @keyframes pulse {
-          0% { box-shadow: 0 0 15px var(--color-torch); }
-          50% { box-shadow: 0 0 25px var(--color-torch); }
-          100% { box-shadow: 0 0 15px var(--color-torch); }
+          padding: 12px 24px;
         }
 
         .scroll-indicator-wrapper {
@@ -259,35 +136,76 @@ const RoseCorridorStory = ({ onComplete, onBack, previousPuzzle }) => {
           z-index: 100;
         }
 
-        @media (max-width: 768px) {
-          .content-wrapper {
-            padding-top: 100px;
-          }
+        .falling-roses {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 1;
+          overflow: hidden;
+        }
 
-          .story-text {
-            font-size: 1.1rem;
-            padding: 0 15px;
-          }
+        .rose {
+          position: absolute;
+          font-size: 1.5rem;
+          opacity: 0.6;
+          animation-name: fall;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
 
-          .continue-button {
-            font-size: 1.1rem;
-            padding: 12px 24px;
+        ${[...Array(12)].map((_, i) => `
+          .rose-${i} {
+            left: ${Math.random() * 100}vw;
+            animation-duration: ${Math.random() * 10 + 10}s;
+            animation-delay: -${Math.random() * 20}s;
+          }
+        `).join('')}
+
+        @keyframes fall {
+          0% {
+            transform: translateY(-5vh) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.6;
+          }
+          90% {
+            opacity: 0.6;
+          }
+          100% {
+            transform: translateY(105vh) rotate(360deg);
+            opacity: 0;
           }
         }
 
-        @media (max-width: 480px) {
-          .content-wrapper {
-            padding-top: 90px;
+        @media (max-width: 768px) {
+          .corridor-content {
+            padding: 10px;
+          }
+
+          .story-scroll {
+            max-width: 90%;
           }
 
           .story-text {
-            font-size: 1rem;
-            padding: 0 10px;
+            font-size: 1.3rem;
           }
 
           .continue-button {
             font-size: 1rem;
             padding: 10px 20px;
+          }
+
+          .scroll-indicator-wrapper {
+            bottom: 10px;
+            right: 10px;
+          }
+
+          .rose {
+            font-size: 1.2rem;
           }
         }
       `}</style>

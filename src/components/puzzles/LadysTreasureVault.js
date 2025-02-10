@@ -7,178 +7,98 @@ import Sparkles from '../shared/Sparkles';
 import PuzzleStepper from '../shared/PuzzleStepper';
 import TreasureVaultBackground from '../svg/TreasureVaultBackground';
 
-const CORRECT_COMBINATION = ['2', '0', '2', '3'];
+const CORRECT_CODE = '2023';
 
 // Combination Lock Component
 const CombinationLock = ({ isOpen, onClose, onUnlock, onFail }) => {
-  const [digits, setDigits] = useState(['', '', '', '']);
-  const [error, setError] = useState('');
+  const [code, setCode] = useState(['', '', '', '']);
   const inputRefs = useRef([]);
 
   const handleDigitChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return;
-    
-    const newDigits = [...digits];
-    newDigits[index] = value.slice(-1);
-    setDigits(newDigits);
-    setError('');
+    if (value === '' || /^[0-9]$/.test(value)) {
+      const newCode = [...code];
+      newCode[index] = value;
+      setCode(newCode);
 
-    // Auto-focus next input
-    if (value && index < 3) {
-      inputRefs.current[index + 1].focus();
+      // Move to next input if a digit was entered
+      if (value !== '' && index < 3) {
+        inputRefs.current[index + 1]?.focus();
+      }
+
+      // Auto-submit when all digits are filled
+      if (newCode.every(digit => digit !== '')) {
+        const enteredCode = newCode.join('');
+        if (enteredCode === CORRECT_CODE) {
+          onUnlock();
+        } else {
+          onFail();
+          // Reset code after wrong attempt
+          setCode(['', '', '', '']);
+          // Focus first input after reset
+          inputRefs.current[0]?.focus();
+        }
+      }
     }
   };
 
   const handleKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !digits[index] && index > 0) {
-      inputRefs.current[index - 1].focus();
+    if (e.key === 'Backspace' && code[index] === '' && index > 0) {
+      const prevInput = inputRefs.current[index - 1];
+      prevInput?.focus();
     }
   };
-
-  const handleSubmit = () => {
-    if (digits.join('') === CORRECT_COMBINATION.join('')) {
-      SoundManager.play('success');
-      onUnlock();
-    } else {
-      setError('Incorrect combination. Try again!');
-      setDigits(['', '', '', '']);
-      inputRefs.current[0].focus();
-      SoundManager.play('error');
-      onClose();
-      onFail();
-    }
-  };
-
-  // Focus first input when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setDigits(['', '', '', '']);
-      setError('');
-      inputRefs.current[0].focus();
-    }
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="combination-overlay">
-      <div className="combination-modal">
-        <button className="close-button" onClick={onClose}>×</button>
-        <h2>Enter Combination</h2>
-        <div className="combination-inputs">
-          {digits.map((digit, index) => (
-            <input
-              key={index}
-              ref={(el) => (inputRefs.current[index] = el)}
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength="1"
-              value={digit}
-              onChange={(e) => handleDigitChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              autoComplete="off"
-            />
-          ))}
-        </div>
-        {error && <p className="error-text">{error}</p>}
-        <button 
-          className="medieval-button unlock-button" 
-          onClick={handleSubmit}
-          disabled={digits.some(digit => !digit)}
-        >
-          Unlock
-        </button>
+    <div className="combination-lock">
+      <div className="code-inputs">
+        {code.map((digit, index) => (
+          <input
+            key={index}
+            ref={el => inputRefs.current[index] = el}
+            type="tel"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={1}
+            value={digit}
+            name={`digit-${index}`}
+            onChange={(e) => handleDigitChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            autoFocus={index === 0}
+          />
+        ))}
       </div>
-      <style jsx>{`
-        .combination-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.8);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-        .combination-modal {
-          background: var(--color-background);
-          padding: 30px;
-          border-radius: var(--radius-medium);
-          border: 2px solid var(--color-gold);
-          position: relative;
-          max-width: 90%;
-          width: 400px;
-        }
-        .close-button {
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          background: none;
-          border: none;
-          color: var(--color-gold);
-          font-size: 24px;
-          cursor: pointer;
-        }
-        .combination-inputs {
-          display: flex;
-          gap: 10px;
-          justify-content: center;
-          margin: 20px 0;
-        }
-        .combination-inputs input {
-          width: 50px;
-          height: 50px;
-          text-align: center;
-          font-size: 24px;
-          border: 2px solid var(--color-gold);
-          background: var(--color-background);
-          color: var(--color-gold);
-          border-radius: var(--radius-small);
-          -webkit-appearance: none;
-          -moz-appearance: textfield;
-        }
-        .combination-inputs input::-webkit-outer-spin-button,
-        .combination-inputs input::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        .error-text {
-          color: var(--color-torch);
-          text-align: center;
-          margin: 10px 0;
-        }
-        .unlock-button {
-          display: block;
-          margin: 20px auto 0;
-          opacity: ${digits.some(digit => !digit) ? '0.5' : '1'};
-        }
-        h2 {
-          color: var(--color-gold);
-          text-align: center;
-          font-family: var(--font-medieval);
-          margin-bottom: 20px;
-        }
-      `}</style>
+      <button className="close-button" onClick={onClose}>×</button>
     </div>
   );
 };
 
 // SVG Components for the chests
 const TreasureChest = ({ number, color, pattern, isOpen, onClick, children }) => (
-  <svg width="200" height="200" viewBox="0 0 200 200" onClick={onClick} className={`treasure-chest ${isOpen ? 'open' : ''}`}>
+  <svg 
+    width="200" 
+    height="200" 
+    viewBox="0 0 200 200" 
+    onClick={onClick} 
+    className={`treasure-chest ${isOpen ? 'open' : ''}`}
+    style={{ cursor: 'pointer' }}
+  >
     {/* Base/Bottom of chest */}
     <rect x="40" y="100" width="120" height="80" rx="10" 
       fill={color} 
       stroke="#8B4513" 
       strokeWidth="4"
       className="chest-base"
+      pointerEvents="none"
     />
     
     {/* Lid of chest */}
-    <g className="chest-lid" style={{ transform: isOpen ? 'rotate(-110deg)' : 'rotate(0deg)', transformOrigin: '160px 100px' }}>
+    <g 
+      className="chest-lid" 
+      style={{ transform: isOpen ? 'rotate(-110deg)' : 'rotate(0deg)', transformOrigin: '160px 100px' }}
+      pointerEvents="none"
+    >
       <path d="M40 100 L160 100 L180 70 L20 70 Z" 
         fill={color} 
         stroke="#8B4513" 
@@ -197,7 +117,15 @@ const TreasureChest = ({ number, color, pattern, isOpen, onClick, children }) =>
     </g>
     
     {/* Number label */}
-    <text x="180" y="30" fill="#FFD700" fontSize="24" fontFamily="medieval" textAnchor="end">
+    <text 
+      x="180" 
+      y="30" 
+      fill="#FFD700" 
+      fontSize="24" 
+      fontFamily="medieval" 
+      textAnchor="end"
+      pointerEvents="none"
+    >
       #{number}
     </text>
     
@@ -243,6 +171,8 @@ const LadysTreasureVault = ({ onComplete, onBack, previousPuzzle = 3, isComplete
   const [showCombination, setShowCombination] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [showDragonAnimation, setShowDragonAnimation] = useState(false);
+  const [showLock, setShowLock] = useState(false);
+  const [currentChest, setCurrentChest] = useState(null);
 
   const puzzleHint = "Remember: The Pink Birkin matches its chest's color, and the combination holds a special date - the year we first met! Also, beware of the chest with the dragon emblem!";
 
@@ -269,41 +199,50 @@ const LadysTreasureVault = ({ onComplete, onBack, previousPuzzle = 3, isComplete
     setShowCombination(false);
     setIsUnlocked(false);
     setShowDragonAnimation(false);
+    setShowLock(false);
+    setCurrentChest(null);
+  };
+
+  const handleSuccess = () => {
+    setShowSparkles(true);
+    setShowSuccess(true);
+    setIsComplete(true);
+    setIsUnlocked(true);
   };
 
   const handleChestClick = (chestNumber) => {
-    if (chestNumber === 3) { // Pink chest
-      if (!isUnlocked) {
-        setShowCombination(true);
-        return;
-      }
-      // If unlocked and it's the pink chest, show success
-      setOpenChest(chestNumber);
-      setShowSuccess(true);
-      setIsComplete(true);
-      SoundManager.play('success');
+    if (isComplete) return;
+    
+    // Set the current chest and open it
+    setCurrentChest(chestNumber);
+    setOpenChest(chestNumber);
+    
+    if (chestNumber === 3) {
+      // Pink Birkin chest - show combination lock
+      setShowLock(true);
     } else {
-      // For any other chest, show dragon animation immediately
+      // All other chests trigger dragon animation and fail
       setShowDragonAnimation(true);
       SoundManager.play('error');
       setTimeout(() => {
-        setShowDragonAnimation(false);
+        resetPuzzle();
       }, 2000);
     }
   };
 
   const handleCombinationUnlock = () => {
-    setIsUnlocked(true);
-    setShowCombination(false);
+    setShowLock(false);
+    setOpenChest(3); // Keep the pink chest open
     setShowSparkles(true);
     setShowSuccess(true);
     setIsComplete(true);
+    setIsUnlocked(true);
     SoundManager.play('success');
-    onComplete && onComplete();
   };
 
   const handleCombinationFail = () => {
     setShowDragonAnimation(true);
+    setShowLock(false);
     SoundManager.play('error');
     setTimeout(() => {
       setShowDragonAnimation(false);
@@ -312,7 +251,9 @@ const LadysTreasureVault = ({ onComplete, onBack, previousPuzzle = 3, isComplete
   };
 
   const handleContinue = () => {
-    onComplete && onComplete();
+    if (onComplete) {
+      onComplete();
+    }
   };
 
   return (
@@ -325,7 +266,7 @@ const LadysTreasureVault = ({ onComplete, onBack, previousPuzzle = 3, isComplete
 
       <PuzzleStepper 
         currentPuzzle={4}
-        totalPuzzles={10}
+        totalPuzzles={8}
         onNavigate={onBack}
       />
 
@@ -375,6 +316,21 @@ const LadysTreasureVault = ({ onComplete, onBack, previousPuzzle = 3, isComplete
           </div>
         </div>
 
+        {showLock && (
+          <CombinationLock
+            isOpen={showLock}
+            onClose={() => setShowLock(false)}
+            onUnlock={handleCombinationUnlock}
+            onFail={handleCombinationFail}
+          />
+        )}
+
+        {showDragonAnimation && (
+          <div className="dragon-animation">
+            <div className="dragon">🐉</div>
+          </div>
+        )}
+
         <Sparkles active={showSparkles} />
 
         {showSuccess && (
@@ -402,19 +358,6 @@ const LadysTreasureVault = ({ onComplete, onBack, previousPuzzle = 3, isComplete
         {errorMessage && (
           <div className="error-message">
             {errorMessage}
-          </div>
-        )}
-
-        <CombinationLock 
-          isOpen={showCombination}
-          onClose={() => setShowCombination(false)}
-          onUnlock={handleCombinationUnlock}
-          onFail={handleCombinationFail}
-        />
-
-        {showDragonAnimation && (
-          <div className="dragon-animation">
-            <div className="dragon">🐉</div>
           </div>
         )}
       </div>
@@ -643,36 +586,83 @@ const LadysTreasureVault = ({ onComplete, onBack, previousPuzzle = 3, isComplete
           position: fixed;
           top: 0;
           left: 0;
-          right: 0;
-          bottom: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
           display: flex;
-          align-items: center;
           justify-content: center;
-          background: rgba(0, 0, 0, 0.7);
+          align-items: center;
           z-index: 1000;
           animation: fadeIn 0.3s ease-out;
         }
 
         .dragon {
-          font-size: 8rem;
+          font-size: 5rem;
           animation: dragonAttack 2s ease-out;
         }
 
+        .combination-lock {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: rgba(34, 34, 59, 0.95);
+          padding: 2rem;
+          border-radius: var(--radius-medium);
+          border: 2px solid var(--color-gold);
+          z-index: 1000;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .code-inputs {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+
+        .code-inputs input {
+          width: 40px;
+          height: 40px;
+          text-align: center;
+          font-size: 1.5rem;
+          background: var(--color-background);
+          border: 2px solid var(--color-gold);
+          color: var(--color-gold);
+          border-radius: var(--radius-small);
+        }
+
+        .close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: var(--color-background);
+          color: var(--color-gold);
+          border: 2px solid var(--color-gold);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+        }
+
         @keyframes dragonAttack {
-          0% { transform: translate(-100vw, 100vh) scale(0.1); }
-          50% { transform: translate(0, 0) scale(2); }
-          100% { transform: translate(100vw, -100vh) scale(0.1); }
+          0% {
+            transform: scale(0.1) translateY(100vh);
+          }
+          50% {
+            transform: scale(2) translateY(0);
+          }
+          100% {
+            transform: scale(3) translateY(-100vh);
+          }
         }
 
-        .prize-display {
-          margin-top: 30px;
-          transform: scale(1.2);
-          animation: floatPrize 3s ease-in-out infinite;
-        }
-
-        @keyframes floatPrize {
-          0%, 100% { transform: scale(1.2) translateY(0); }
-          50% { transform: scale(1.2) translateY(-10px); }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
       `}</style>
     </div>

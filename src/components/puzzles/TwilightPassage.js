@@ -22,7 +22,7 @@ const TwilightPassage = ({ onComplete, onBack, previousPuzzle = PAGES.LADYS_TREA
 
       <PuzzleStepper 
         currentPuzzle={4}
-        totalPuzzles={10}
+        totalPuzzles={8}
         onNavigate={onBack}
       />
 

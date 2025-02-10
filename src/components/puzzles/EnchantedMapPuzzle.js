@@ -68,46 +68,40 @@ const EnchantedMapPuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: in
 
   const handleTileClick = async (tileId) => {
     if (isComplete || isProcessing) return;
-    
-    const tile = tiles.find(t => t.id === tileId);
-    if (!tile || flippedTiles.includes(tileId)) return;
+
+    const clickedTile = tiles.find(tile => tile.id === tileId);
+    if (!clickedTile || flippedTiles.includes(tileId)) return;
 
     setIsProcessing(true);
-    SoundManager.play('click');
-    
-    // Temporarily flip the tile
+
+    // Always flip the tile first
     setFlippedTiles(prev => [...prev, tileId]);
-    
-    // Check if this is the next expected letter in "LONDON"
-    if (tile.letter === TARGET_WORD[nextExpectedLetter]) {
+
+    // Check if this is the next expected letter in the word
+    if (clickedTile.letter === TARGET_WORD[nextExpectedLetter]) {
+      SoundManager.play('success');
       setNextExpectedLetter(prev => prev + 1);
-      setErrorMessage('');
 
       // Check if puzzle is complete
       if (nextExpectedLetter === TARGET_WORD.length - 1) {
         setShowSparkles(true);
-        SoundManager.play('success');
+        setShowSuccess(true);
+        setIsComplete(true);
         setTimeout(() => {
-          setShowSuccess(true);
-          setIsComplete(true);
-        }, 1000);
-      } else {
-        // Keep the correct tile flipped, but reset processing after a delay
-        setTimeout(() => {
-          setIsProcessing(false);
-        }, 500);
+          onComplete && onComplete();
+        }, 2000);
       }
     } else {
-      SoundManager.play('error');
-      setErrorMessage('That\'s not the next letter in our special city. Try another tile!');
-      
-      // Reset the flipped tile after a brief delay
+      // Wrong letter selected - flip back after a delay
+      SoundManager.play('click');
       setTimeout(() => {
         setFlippedTiles(prev => prev.filter(id => id !== tileId));
-        setIsProcessing(false);
-        setTimeout(() => setErrorMessage(''), 1500);
       }, 1000);
     }
+
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 1000);
   };
 
   const handleContinue = () => {
@@ -295,14 +289,15 @@ const EnchantedMapPuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: in
           transform: translateX(-50%);
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          grid-template-rows: repeat(6, 1fr);  /* Changed from 8 to 6 rows */
-          gap: 15px;
-          padding: 30px;
+          grid-template-rows: repeat(6, 1fr);
+          gap: 10px;
+          padding: 20px;
           border-radius: var(--radius-medium);
           width: 90%;
           max-width: 500px;
-          height: 70%;  /* Reduced from 80% to 70% */
+          height: 70%;
           z-index: 2;
+          place-items: center;
         }
 
         .success-message {
@@ -391,10 +386,8 @@ const EnchantedMapPuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: in
           }
 
           .tiles-grid {
-            gap: 12px;
-            padding: 25px;
-            height: 75%;  /* Reduced from 85% */
-            width: 95%;
+            gap: 8px;
+            padding: 15px;
           }
         }
 
@@ -404,11 +397,8 @@ const EnchantedMapPuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: in
           }
 
           .tiles-grid {
-            top: 15%;
-            gap: 10px;
-            padding: 20px;
-            width: 95%;
-            height: 75%;  /* Reduced from 85% */
+            gap: 5px;
+            padding: 10px;
           }
         }
 
@@ -435,6 +425,77 @@ const EnchantedMapPuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: in
           border-radius: var(--radius-medium);
           box-shadow: var(--shadow-medium);
           z-index: 3;
+        }
+
+        .tile {
+          width: 60px;
+          height: 60px;
+          perspective: 1000px;
+          cursor: pointer;
+          margin: 5px;
+        }
+
+        .tile.locked {
+          cursor: default;
+        }
+
+        .tile-inner {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          transition: transform 0.6s;
+          transform-style: preserve-3d;
+        }
+
+        .tile.flipped .tile-inner {
+          transform: rotateY(180deg);
+        }
+
+        .tile-front,
+        .tile-back {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--color-background);
+          border: 2px solid var(--color-gold);
+          border-radius: var(--radius-small);
+          box-shadow: var(--shadow-medium);
+        }
+
+        .tile-front {
+          background: linear-gradient(45deg, var(--color-background-dark), var(--color-background));
+        }
+
+        .tile-back {
+          background: linear-gradient(45deg, var(--color-gold), #ffd700);
+          transform: rotateY(180deg);
+        }
+
+        .question-mark {
+          font-family: var(--font-medieval);
+          font-size: 2rem;
+          color: var(--color-gold);
+          opacity: 0.7;
+        }
+
+        .letter {
+          font-family: var(--font-medieval);
+          font-size: 2rem;
+          color: var(--color-background);
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .tile:hover:not(.locked) .tile-inner {
+          transform: scale(1.05);
+        }
+
+        .tile.flipped:hover .tile-inner {
+          transform: rotateY(180deg) scale(1.05);
         }
       `}</style>
     </div>

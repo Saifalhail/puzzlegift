@@ -27,7 +27,7 @@ const ScrollIndicator = ({ text = 'Scroll for more', direction = 'down' }) => {
         .arrow {
           color: var(--color-gold);
           font-size: 2.5rem;
-          text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+          text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
           animation: bounce 1s ease-in-out infinite;
         }
 
@@ -36,7 +36,7 @@ const ScrollIndicator = ({ text = 'Scroll for more', direction = 'down' }) => {
           font-size: 1.2rem;
           margin-top: 5px;
           font-family: var(--font-medieval);
-          text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+          text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
           white-space: nowrap;
         }
 

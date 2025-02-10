@@ -12,6 +12,10 @@ import KnightsTalePuzzle from './components/puzzles/KnightsTalePuzzle';
 import LadysTreasureVault from './components/puzzles/LadysTreasureVault';
 import TwilightPassage from './components/puzzles/TwilightPassage';
 import MagicalCarriageWorkshop from './components/puzzles/MagicalCarriageWorkshop';
+import UnlikelyMemoriesBuffer from './components/puzzles/UnlikelyMemoriesBuffer';
+import ChangingRoomCapers from './components/puzzles/ChangingRoomCapers';
+import GrandFinaleBuffer from './components/puzzles/GrandFinaleBuffer';
+import HallOfMemories from './components/puzzles/HallOfMemories';
 
 // Define page constants
 export const PAGES = {
@@ -24,7 +28,11 @@ export const PAGES = {
   KNIGHTS_TALE: 'KNIGHTS_TALE',
   LADYS_TREASURE_VAULT: 'LADYS_TREASURE_VAULT',
   TWILIGHT_PASSAGE: 'TWILIGHT_PASSAGE',
-  MAGICAL_CARRIAGE: 'MAGICAL_CARRIAGE'
+  MAGICAL_CARRIAGE: 'MAGICAL_CARRIAGE',
+  UNLIKELY_MEMORIES_BUFFER: 'UNLIKELY_MEMORIES_BUFFER',
+  CHANGING_ROOM_CAPERS: 'CHANGING_ROOM_CAPERS',
+  GRAND_FINALE_BUFFER: 'GRAND_FINALE_BUFFER',
+  HALL_OF_MEMORIES: 'HALL_OF_MEMORIES'
 };
 
 // Update puzzle numbers for stepper
@@ -35,9 +43,15 @@ const PAGE_TO_PUZZLE_NUMBER = {
   [PAGES.ENCHANTED_MAP]: 2,
   [PAGES.KNIGHTS_TALE]: 3,
   [PAGES.LADYS_TREASURE_VAULT]: 4,
+  [PAGES.TWILIGHT_PASSAGE]: 4, // Buffer story
+  [PAGES.MAGICAL_CARRIAGE]: 5,
+  [PAGES.UNLIKELY_MEMORIES_BUFFER]: 5, // Share same number as Magical Carriage
+  [PAGES.CHANGING_ROOM_CAPERS]: 6,
+  [PAGES.GRAND_FINALE_BUFFER]: 6, // Share same number as Changing Room
+  [PAGES.HALL_OF_MEMORIES]: 7
 };
 
-const TOTAL_PUZZLES = 10;
+const TOTAL_PUZZLES = 8;
 
 function App() {
   const [currentPage, setCurrentPage] = useState(PAGES.INTRODUCTION);
@@ -68,7 +82,6 @@ function App() {
 
   const handlePuzzleComplete = () => {
     setPuzzleHistory(prev => [...prev, currentPage]);
-    // Add current puzzle to completed set
     setCompletedPuzzles(prev => new Set([...prev, currentPage]));
     
     switch (currentPage) {
@@ -100,7 +113,19 @@ function App() {
         setCurrentPage(PAGES.MAGICAL_CARRIAGE);
         break;
       case PAGES.MAGICAL_CARRIAGE:
-        // Add next puzzle transition here
+        setCurrentPage(PAGES.UNLIKELY_MEMORIES_BUFFER);
+        break;
+      case PAGES.UNLIKELY_MEMORIES_BUFFER:
+        setCurrentPage(PAGES.CHANGING_ROOM_CAPERS);
+        break;
+      case PAGES.CHANGING_ROOM_CAPERS:
+        setCurrentPage(PAGES.GRAND_FINALE_BUFFER);
+        break;
+      case PAGES.GRAND_FINALE_BUFFER:
+        setCurrentPage(PAGES.HALL_OF_MEMORIES);
+        break;
+      case PAGES.HALL_OF_MEMORIES:
+        // Handle final completion - maybe show a thank you screen
         break;
       default:
         break;
@@ -113,21 +138,44 @@ function App() {
   };
 
   const handleBack = (destination) => {
-    switch (destination) {
-      case 1:
+    if (typeof destination === 'string') {
+      setCurrentPage(destination);
+      return;
+    }
+
+    switch (currentPage) {
+      case PAGES.ROYAL_FEAST:
         setCurrentPage(PAGES.CASTLE_GATE);
         break;
-      case 2:
+      case PAGES.CASTLE_CORRIDOR:
         setCurrentPage(PAGES.ROYAL_FEAST);
         break;
-      case 3:
+      case PAGES.ENCHANTED_MAP:
+        setCurrentPage(PAGES.CASTLE_CORRIDOR);
+        break;
+      case PAGES.ROSE_CORRIDOR:
+        setCurrentPage(PAGES.ENCHANTED_MAP);
+        break;
+      case PAGES.KNIGHTS_TALE:
+        setCurrentPage(PAGES.ROSE_CORRIDOR);
+        break;
+      case PAGES.LADYS_TREASURE_VAULT:
         setCurrentPage(PAGES.KNIGHTS_TALE);
         break;
-      case 4:
+      case PAGES.TWILIGHT_PASSAGE:
         setCurrentPage(PAGES.LADYS_TREASURE_VAULT);
         break;
-      case 5:
+      case PAGES.MAGICAL_CARRIAGE:
         setCurrentPage(PAGES.TWILIGHT_PASSAGE);
+        break;
+      case PAGES.UNLIKELY_MEMORIES_BUFFER:
+        setCurrentPage(PAGES.MAGICAL_CARRIAGE);
+        break;
+      case PAGES.GRAND_FINALE_BUFFER:
+        setCurrentPage(PAGES.CHANGING_ROOM_CAPERS);
+        break;
+      case PAGES.HALL_OF_MEMORIES:
+        setCurrentPage(PAGES.GRAND_FINALE_BUFFER);
         break;
       default:
         setCurrentPage(PAGES.INTRODUCTION);
@@ -136,7 +184,6 @@ function App() {
 
   const handleStepperNavigate = (puzzleNumber) => {
     const currentNumber = getCurrentPuzzleNumber();
-    // Only allow navigation to completed puzzles
     if (puzzleNumber <= currentNumber) {
       switch (puzzleNumber) {
         case 0:
@@ -156,6 +203,15 @@ function App() {
           break;
         case 5:
           setCurrentPage(PAGES.TWILIGHT_PASSAGE);
+          break;
+        case 6:
+          setCurrentPage(PAGES.MAGICAL_CARRIAGE);
+          break;
+        case 7:
+          setCurrentPage(PAGES.CHANGING_ROOM_CAPERS);
+          break;
+        case 8:
+          setCurrentPage(PAGES.HALL_OF_MEMORIES);
           break;
         default:
           break;
@@ -213,7 +269,7 @@ function App() {
         return (
           <CastleGatePuzzle 
             onComplete={handlePuzzleComplete} 
-            onBack={handleBack}
+            onBack={() => setCurrentPage(PAGES.INTRODUCTION)}
             isComplete={isPuzzleCompleted(PAGES.CASTLE_GATE)}
           />
         );
@@ -221,8 +277,8 @@ function App() {
         return (
           <RoyalFeastPuzzle
             onComplete={handlePuzzleComplete}
-            onBack={handleBack}
-            previousPuzzle={0}
+            onBack={() => setCurrentPage(PAGES.CASTLE_GATE)}
+            previousPuzzle={PAGES.CASTLE_GATE}
             isComplete={isPuzzleCompleted(PAGES.ROYAL_FEAST)}
           />
         );
@@ -233,7 +289,7 @@ function App() {
               <CastleCorridorScene className="corridor-scene" />
             </div>
             <div className="welcome-content">
-              <BackButton onBack={handleBack} destination={1} />
+              <BackButton onBack={() => setCurrentPage(PAGES.ROYAL_FEAST)} />
               
               <div className="medieval-scroll welcome-scroll">
                 <div className="scroll-content">
@@ -260,8 +316,8 @@ function App() {
         return (
           <EnchantedMapPuzzle
             onComplete={handlePuzzleComplete}
-            onBack={handleBack}
-            previousPuzzle={1}
+            onBack={() => setCurrentPage(PAGES.CASTLE_CORRIDOR)}
+            previousPuzzle={PAGES.CASTLE_CORRIDOR}
             isComplete={isPuzzleCompleted(PAGES.ENCHANTED_MAP)}
           />
         );
@@ -269,16 +325,16 @@ function App() {
         return (
           <RoseCorridorStory
             onComplete={handlePuzzleComplete}
-            onBack={handleBack}
-            previousPuzzle={2}
+            onBack={() => setCurrentPage(PAGES.ENCHANTED_MAP)}
+            previousPuzzle={PAGES.ENCHANTED_MAP}
           />
         );
       case PAGES.KNIGHTS_TALE:
         return (
           <KnightsTalePuzzle
             onComplete={handlePuzzleComplete}
-            onBack={handleBack}
-            previousPuzzle={2}
+            onBack={() => setCurrentPage(PAGES.ROSE_CORRIDOR)}
+            previousPuzzle={PAGES.ROSE_CORRIDOR}
             isComplete={isPuzzleCompleted(PAGES.KNIGHTS_TALE)}
           />
         );
@@ -286,19 +342,23 @@ function App() {
         return (
           <LadysTreasureVault
             onComplete={() => {
-              setCurrentPage(PAGES.TWILIGHT_PASSAGE);
               setCompletedPuzzles(prev => new Set([...prev, PAGES.LADYS_TREASURE_VAULT]));
+              setCurrentPage(PAGES.TWILIGHT_PASSAGE);
             }}
-            onBack={handleBack}
-            previousPuzzle={3}
+            onBack={() => setCurrentPage(PAGES.KNIGHTS_TALE)}
+            previousPuzzle={PAGES.KNIGHTS_TALE}
             isComplete={isPuzzleCompleted(PAGES.LADYS_TREASURE_VAULT)}
           />
         );
       case PAGES.TWILIGHT_PASSAGE:
         return (
           <TwilightPassage
-            onComplete={() => setCurrentPage(PAGES.MAGICAL_CARRIAGE)}
+            onComplete={() => {
+              setCompletedPuzzles(prev => new Set([...prev, PAGES.TWILIGHT_PASSAGE]));
+              setCurrentPage(PAGES.MAGICAL_CARRIAGE);
+            }}
             onBack={() => setCurrentPage(PAGES.LADYS_TREASURE_VAULT)}
+            previousPuzzle={PAGES.LADYS_TREASURE_VAULT}
           />
         );
       case PAGES.MAGICAL_CARRIAGE:
@@ -306,11 +366,57 @@ function App() {
           <MagicalCarriageWorkshop
             onComplete={() => {
               setCompletedPuzzles(prev => new Set([...prev, PAGES.MAGICAL_CARRIAGE]));
-              // Handle next page transition
+              setCurrentPage(PAGES.UNLIKELY_MEMORIES_BUFFER);
             }}
-            onBack={handleBack}
-            previousPuzzle={4}
+            onBack={() => setCurrentPage(PAGES.TWILIGHT_PASSAGE)}
+            previousPuzzle={PAGES.TWILIGHT_PASSAGE}
             isComplete={isPuzzleCompleted(PAGES.MAGICAL_CARRIAGE)}
+          />
+        );
+      case PAGES.UNLIKELY_MEMORIES_BUFFER:
+        return (
+          <UnlikelyMemoriesBuffer
+            onComplete={() => {
+              setCompletedPuzzles(prev => new Set([...prev, PAGES.UNLIKELY_MEMORIES_BUFFER]));
+              setCurrentPage(PAGES.CHANGING_ROOM_CAPERS);
+            }}
+            onBack={() => setCurrentPage(PAGES.MAGICAL_CARRIAGE)}
+            previousPuzzle={PAGES.MAGICAL_CARRIAGE}
+          />
+        );
+      case PAGES.CHANGING_ROOM_CAPERS:
+        return (
+          <ChangingRoomCapers
+            onComplete={() => {
+              setCompletedPuzzles(prev => new Set([...prev, PAGES.CHANGING_ROOM_CAPERS]));
+              setCurrentPage(PAGES.GRAND_FINALE_BUFFER);
+            }}
+            onBack={() => setCurrentPage(PAGES.UNLIKELY_MEMORIES_BUFFER)}
+            previousPuzzle={PAGES.UNLIKELY_MEMORIES_BUFFER}
+            isComplete={isPuzzleCompleted(PAGES.CHANGING_ROOM_CAPERS)}
+          />
+        );
+      case PAGES.GRAND_FINALE_BUFFER:
+        return (
+          <GrandFinaleBuffer
+            onComplete={() => {
+              setCompletedPuzzles(prev => new Set([...prev, PAGES.GRAND_FINALE_BUFFER]));
+              setCurrentPage(PAGES.HALL_OF_MEMORIES);
+            }}
+            onBack={() => setCurrentPage(PAGES.CHANGING_ROOM_CAPERS)}
+            previousPuzzle={PAGES.CHANGING_ROOM_CAPERS}
+          />
+        );
+      case PAGES.HALL_OF_MEMORIES:
+        return (
+          <HallOfMemories
+            onComplete={() => {
+              setCompletedPuzzles(prev => new Set([...prev, PAGES.HALL_OF_MEMORIES]));
+              // Handle final completion
+            }}
+            onBack={() => setCurrentPage(PAGES.GRAND_FINALE_BUFFER)}
+            previousPuzzle={PAGES.GRAND_FINALE_BUFFER}
+            isComplete={isPuzzleCompleted(PAGES.HALL_OF_MEMORIES)}
           />
         );
       default:

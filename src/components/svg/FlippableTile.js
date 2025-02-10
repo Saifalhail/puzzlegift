@@ -225,4 +225,4 @@ const FlippableTile = ({ letter, isFlipped, onClick, isLocked }) => {
   );
 };
 
-export default FlippableTile; 
+export default FlippableTile;
