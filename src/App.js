@@ -57,6 +57,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(PAGES.INTRODUCTION);
   const [puzzleHistory, setPuzzleHistory] = useState([]);
   const [completedPuzzles, setCompletedPuzzles] = useState(new Set());
+  const [audio] = useState(new Audio(`${process.env.PUBLIC_URL}/Lord-of-the-Rings-Sound-of-The-S.mp3`));
 
   // Handle mobile viewport height issues
   useEffect(() => {
@@ -75,12 +76,45 @@ function App() {
     };
   }, []);
 
+  // Setup audio
+  useEffect(() => {
+    audio.loop = true;
+    audio.volume = 0.5;
+
+    // Add error handling for audio loading
+    const handleError = (error) => {
+      console.error('Audio loading error:', error);
+    };
+
+    audio.addEventListener('error', handleError);
+
+    return () => {
+      audio.removeEventListener('error', handleError);
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, [audio]);
+
   // Convert page to puzzle number (for stepper)
   const getCurrentPuzzleNumber = () => {
     return PAGE_TO_PUZZLE_NUMBER[currentPage] ?? -1;
   };
 
   const handlePuzzleComplete = () => {
+    // Start playing music when Begin Journey is clicked (Introduction page)
+    if (currentPage === PAGES.INTRODUCTION) {
+      try {
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error('Audio play error:', error);
+          });
+        }
+      } catch (error) {
+        console.error('Audio play error:', error);
+      }
+    }
+
     setPuzzleHistory(prev => [...prev, currentPage]);
     setCompletedPuzzles(prev => new Set([...prev, currentPage]));
     
