@@ -254,7 +254,7 @@ const ChangingRoomCapers = ({ onComplete, onBack, previousPuzzle = PAGES.UNLIKEL
               "1. Tap the highlighted words to cycle through options",
               "2. Match both quotes to recreate that hilarious memory",
               "3. The first quote was about someone's outfit",
-              "4. The second quote was about finding someone",
+              "4. The second quote was about finding a Place",
               "5. Click 'Confirm Quotes' when you think you have it right",
               "6. Don't worry about mistakes—keep trying until you get it!"
             ]}

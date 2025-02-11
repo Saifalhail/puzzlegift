@@ -46,7 +46,7 @@ const RIDDLES = [
   },
   {
     id: 'dream_ring',
-    text: "Which brand is the dream wedding ring for your wife?",
+    text: "Which brand is the dream wedding ring for you?",
     options: ['Tiffany & Co.', 'Cartier', 'Choumet', 'Bvlgari'],
     correct: 'Choumet'
   },
