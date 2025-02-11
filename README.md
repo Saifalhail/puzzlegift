@@ -19,7 +19,7 @@ A magical interactive birthday adventure set in a mystical castle, featuring var
 
 ## 🚀 Live Demo
 
-Visit the live experience at: [https://[your-username].github.io/puzzlegift/](https://[your-username].github.io/puzzlegift/)
+Visit the live experience at: [https://Saifalhail.github.io/puzzlegift/](https://Saifalhail.github.io/puzzlegift/)
 
 ## 🛠️ Technologies Used
 
@@ -33,7 +33,7 @@ Visit the live experience at: [https://[your-username].github.io/puzzlegift/](ht
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/[your-username]/puzzlegift.git
+git clone https://github.com/Saifalhail/puzzlegift.git
 ```
 
 2. Navigate to the project directory:
@@ -58,7 +58,7 @@ This project is configured for GitHub Pages deployment. To deploy:
 1. Update the `homepage` field in `package.json` with your GitHub Pages URL:
 ```json
 {
-  "homepage": "https://[your-username].github.io/puzzlegift"
+  "homepage": "https://Saifalhail.github.io/puzzlegift"
 }
 ```
 
@@ -116,7 +116,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/[your-username]/puzzlegift/issues).
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Saifalhail/puzzlegift/issues).
 
 ## 🙏 Acknowledgments
 
