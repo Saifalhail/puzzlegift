@@ -36,7 +36,7 @@ const TwilightPassage = ({ onComplete, onBack, previousPuzzle = PAGES.LADYS_TREA
           
           <div className="story-text">
             <p>
-              My dearest wife, you have skillfully uncovered treasures beyond compare—your 
+              My dearest wife-to-be, you have skillfully uncovered treasures beyond compare—your 
               cherished Pink Birkin among them. Now, under the soft light of dusk, let us 
               slip away from the vault and step into the quiet corridors once more. Ahead 
               lies an unexpected marvel: a workshop said to fuse modern dreams with ancient magic.

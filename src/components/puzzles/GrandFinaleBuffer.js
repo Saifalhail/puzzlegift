@@ -3,9 +3,9 @@ import Header from '../shared/Header';
 import ScrollIndicator from '../shared/ScrollIndicator';
 import SoundManager from '../../utils/SoundManager';
 import PuzzleStepper from '../shared/PuzzleStepper';
-import GrandRoseGateScene from '../svg/GrandRoseGateScene';
+import CourtyardScene from '../svg/CourtyardScene';
 
-const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
+const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 7 }) => {
   useEffect(() => {
     // Start with orchestral music
     SoundManager.startBackgroundMusic('harp', 0.5);
@@ -25,11 +25,11 @@ const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
         onNavigate={onBack}
       />
 
-      <h1 className="medieval-title">Toward the Grand Finale</h1>
+      <h1 className="medieval-title">A Summons to the Royal Court</h1>
 
-      <div className="finale-buffer">
+      <div className="courtyard-buffer">
         <div className="background-scene">
-          <GrandRoseGateScene className="gate-scene" />
+          <CourtyardScene className="courtyard-scene" />
         </div>
 
         <div className="buffer-content">
@@ -37,19 +37,17 @@ const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
             <div className="scroll-content">
               <div className="heart-decoration">❦</div>
               <p className="story-text">
-                My dearest wife, your laughter still echoes through these halls after recalling 
-                our funniest memory. You've guided us through feasts, enchanted maps, knights, 
-                and even the hidden Pink Birkin. Step by step, your wit and heart have unlocked 
-                every secret this castle holds.
+                My beloved wife-to-be, you have conquered every trial this enchanted castle set before you: 
+                unlocking gates, indulging feasts, mapping out memories, guiding knights, uncovering 
+                hidden treasures, crafting dream carriages, and even recreating hilarious changing-room moments.
               </p>
               <p className="story-text">
-                One final door stands before us—the Grand Rose Gate. Beyond it lies a Hall of 
-                Memories, where all our cherished moments come together. Once you pass through, 
-                you'll reach the end of this adventure… yet the beginning of another in our story.
+                Now, a royal herald calls from the courtyard. The King himself has summoned us to the 
+                Great Hall for a final audience—a test of wit and remembrance to prove our worth.
               </p>
               <p className="story-text">
-                Are you ready, my love, to see it all come full circle? Let us take the last 
-                few steps hand in hand…
+                Step through these grand doors and stand before the High Court. Let this be our last 
+                chapter in this castle's story—where your clever mind shall shine one final time!
               </p>
               <div className="heart-decoration">❦</div>
             </div>
@@ -58,23 +56,31 @@ const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
           <button 
             className="medieval-button continue-button"
             onClick={onComplete}
-            aria-label="Enter the Grand Rose Gate"
+            aria-label="Enter the Great Hall"
           >
-            Enter the Grand Rose Gate →
+            Enter the Great Hall →
           </button>
         </div>
 
-        <div className="rose-petals">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className={`petal petal-${i + 1}`}>🌹</div>
+        <div className="torches">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className={`torch torch-${i + 1}`}>
+              <div className="flame">🔥</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="banners">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className={`banner banner-${i + 1}`}>⚜️</div>
           ))}
         </div>
       </div>
 
-    
+      <ScrollIndicator />
 
       <style jsx>{`
-        .finale-buffer {
+        .courtyard-buffer {
           position: relative;
           max-width: 1000px;
           margin: 0 auto;
@@ -96,7 +102,7 @@ const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
           transition: opacity 0.5s ease;
         }
 
-        .gate-scene {
+        .courtyard-scene {
           width: 100%;
           height: 100%;
           object-fit: cover;
@@ -157,45 +163,53 @@ const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
           box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
         }
 
-        .rose-petals {
+        .torches {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
           pointer-events: none;
-          z-index: 1;
         }
 
-        .petal {
+        .torch {
           position: absolute;
-          font-size: 1.2rem;
-          opacity: 0.6;
-          animation: float 10s ease-in-out infinite;
+          font-size: 2rem;
+          animation: flicker 2s infinite;
         }
 
-        ${Array.from({ length: 12 }).map((_, i) => `
-          .petal-${i + 1} {
-            left: ${Math.random() * 100}%;
-            top: ${Math.random() * 100}%;
-            animation-delay: -${Math.random() * 10}s;
-            animation-duration: ${10 + Math.random() * 5}s;
-          }
-        `).join('\n')}
+        .torch-1 { top: 10%; left: 5%; }
+        .torch-2 { top: 10%; right: 5%; }
+        .torch-3 { bottom: 10%; left: 5%; }
+        .torch-4 { bottom: 10%; right: 5%; }
 
-        @keyframes float {
-          0%, 100% {
-            transform: translate(0, 0) rotate(0deg);
-          }
-          25% {
-            transform: translate(10px, 20px) rotate(90deg);
-          }
-          50% {
-            transform: translate(20px, 0) rotate(180deg);
-          }
-          75% {
-            transform: translate(10px, -20px) rotate(270deg);
-          }
+        .banners {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+        }
+
+        .banner {
+          position: absolute;
+          font-size: 3rem;
+          animation: wave 6s ease-in-out infinite;
+        }
+
+        .banner-1 { top: 15%; left: 50%; transform: translateX(-50%); }
+        .banner-2 { top: 25%; left: 20%; }
+        .banner-3 { top: 25%; right: 20%; }
+
+        @keyframes flicker {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(0.98); }
+        }
+
+        @keyframes wave {
+          0%, 100% { transform: rotate(-2deg); }
+          50% { transform: rotate(2deg); }
         }
 
         @keyframes pulse {
@@ -214,13 +228,17 @@ const GrandFinaleBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
             padding: 12px 24px;
           }
 
-          .petal {
-            font-size: 1rem;
+          .torch {
+            font-size: 1.5rem;
+          }
+
+          .banner {
+            font-size: 2rem;
           }
         }
       `}</style>
     </div>
   );
-};
+}
 
 export default GrandFinaleBuffer; 

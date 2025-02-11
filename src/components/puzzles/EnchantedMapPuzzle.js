@@ -87,9 +87,6 @@ const EnchantedMapPuzzle = ({ onComplete, onBack, previousPuzzle, isComplete: in
         setShowSparkles(true);
         setShowSuccess(true);
         setIsComplete(true);
-        setTimeout(() => {
-          onComplete && onComplete();
-        }, 2000);
       }
     } else {
       // Wrong letter selected - flip back after a delay

@@ -15,7 +15,7 @@ import MagicalCarriageWorkshop from './components/puzzles/MagicalCarriageWorksho
 import UnlikelyMemoriesBuffer from './components/puzzles/UnlikelyMemoriesBuffer';
 import ChangingRoomCapers from './components/puzzles/ChangingRoomCapers';
 import GrandFinaleBuffer from './components/puzzles/GrandFinaleBuffer';
-import HallOfMemories from './components/puzzles/HallOfMemories';
+import KingsGrandRiddle from './components/puzzles/KingsGrandRiddle';
 
 // Define page constants
 export const PAGES = {
@@ -32,7 +32,7 @@ export const PAGES = {
   UNLIKELY_MEMORIES_BUFFER: 'UNLIKELY_MEMORIES_BUFFER',
   CHANGING_ROOM_CAPERS: 'CHANGING_ROOM_CAPERS',
   GRAND_FINALE_BUFFER: 'GRAND_FINALE_BUFFER',
-  HALL_OF_MEMORIES: 'HALL_OF_MEMORIES'
+  KINGS_GRAND_RIDDLE: 'KINGS_GRAND_RIDDLE'
 };
 
 // Update puzzle numbers for stepper
@@ -48,7 +48,7 @@ const PAGE_TO_PUZZLE_NUMBER = {
   [PAGES.UNLIKELY_MEMORIES_BUFFER]: 5, // Share same number as Magical Carriage
   [PAGES.CHANGING_ROOM_CAPERS]: 6,
   [PAGES.GRAND_FINALE_BUFFER]: 6, // Share same number as Changing Room
-  [PAGES.HALL_OF_MEMORIES]: 7
+  [PAGES.KINGS_GRAND_RIDDLE]: 7
 };
 
 const TOTAL_PUZZLES = 8;
@@ -122,10 +122,11 @@ function App() {
         setCurrentPage(PAGES.GRAND_FINALE_BUFFER);
         break;
       case PAGES.GRAND_FINALE_BUFFER:
-        setCurrentPage(PAGES.HALL_OF_MEMORIES);
+        setCurrentPage(PAGES.KINGS_GRAND_RIDDLE);
         break;
-      case PAGES.HALL_OF_MEMORIES:
-        // Handle final completion - maybe show a thank you screen
+      case PAGES.KINGS_GRAND_RIDDLE:
+        // Show final thank you or celebration screen
+        // For now, we'll keep them on the same page with the gift card revealed
         break;
       default:
         break;
@@ -171,10 +172,13 @@ function App() {
       case PAGES.UNLIKELY_MEMORIES_BUFFER:
         setCurrentPage(PAGES.MAGICAL_CARRIAGE);
         break;
+      case PAGES.CHANGING_ROOM_CAPERS:
+        setCurrentPage(PAGES.UNLIKELY_MEMORIES_BUFFER);
+        break;
       case PAGES.GRAND_FINALE_BUFFER:
         setCurrentPage(PAGES.CHANGING_ROOM_CAPERS);
         break;
-      case PAGES.HALL_OF_MEMORIES:
+      case PAGES.KINGS_GRAND_RIDDLE:
         setCurrentPage(PAGES.GRAND_FINALE_BUFFER);
         break;
       default:
@@ -202,16 +206,13 @@ function App() {
           setCurrentPage(PAGES.LADYS_TREASURE_VAULT);
           break;
         case 5:
-          setCurrentPage(PAGES.TWILIGHT_PASSAGE);
-          break;
-        case 6:
           setCurrentPage(PAGES.MAGICAL_CARRIAGE);
           break;
-        case 7:
+        case 6:
           setCurrentPage(PAGES.CHANGING_ROOM_CAPERS);
           break;
-        case 8:
-          setCurrentPage(PAGES.HALL_OF_MEMORIES);
+        case 7:
+          setCurrentPage(PAGES.KINGS_GRAND_RIDDLE);
           break;
         default:
           break;
@@ -296,7 +297,7 @@ function App() {
                   <div className="heart-decoration">❦</div>
                   <div className="message-content">
                     <p>
-                      My dearest wife, you've dazzled everyone at the Royal Feast. 
+                      My dearest wife-to-be, you've dazzled everyone at the Royal Feast. 
                       Now, let us quietly walk through these dimly lit corridors. 
                       Ahead, we'll find a hidden library where an enchanted map may 
                       spark memories of our first grand adventure. Onward, my love!
@@ -401,22 +402,23 @@ function App() {
           <GrandFinaleBuffer
             onComplete={() => {
               setCompletedPuzzles(prev => new Set([...prev, PAGES.GRAND_FINALE_BUFFER]));
-              setCurrentPage(PAGES.HALL_OF_MEMORIES);
+              setCurrentPage(PAGES.KINGS_GRAND_RIDDLE);
             }}
             onBack={() => setCurrentPage(PAGES.CHANGING_ROOM_CAPERS)}
             previousPuzzle={PAGES.CHANGING_ROOM_CAPERS}
           />
         );
-      case PAGES.HALL_OF_MEMORIES:
+      case PAGES.KINGS_GRAND_RIDDLE:
         return (
-          <HallOfMemories
+          <KingsGrandRiddle
             onComplete={() => {
-              setCompletedPuzzles(prev => new Set([...prev, PAGES.HALL_OF_MEMORIES]));
-              // Handle final completion
+              setCompletedPuzzles(prev => new Set([...prev, PAGES.KINGS_GRAND_RIDDLE]));
+              // Show final thank you or celebration screen
+              // For now, we'll keep them on the same page with the gift card revealed
             }}
             onBack={() => setCurrentPage(PAGES.GRAND_FINALE_BUFFER)}
             previousPuzzle={PAGES.GRAND_FINALE_BUFFER}
-            isComplete={isPuzzleCompleted(PAGES.HALL_OF_MEMORIES)}
+            isComplete={isPuzzleCompleted(PAGES.KINGS_GRAND_RIDDLE)}
           />
         );
       default:

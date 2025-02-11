@@ -44,7 +44,7 @@ const UnlikelyMemoriesBuffer = ({ onComplete, onBack, previousPuzzle = 6 }) => {
               
               <div className="story-text">
                 <p>
-                  My beloved wife, you've once again proven your ingenuity by completing the last challenge. 
+                  My beloved wife-to-be, you've once again proven your ingenuity by completing the last challenge. 
                   Now, the castle beckons us onward through these winding corridors. But notice how the walls 
                   begin to shimmer with an unusual magic.
                 </p>
